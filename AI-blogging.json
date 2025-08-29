@@ -1,0 +1,56 @@
+{
+  "name": "AI Blogging Workflow",
+  "author": "areeshausmani93@gmail.com",
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-sheets:WatchRows",
+      "parameters": {
+        "connection": "YOUR_GOOGLE_CONNECTION",
+        "sheetId": "YOUR_SHEET_ID",
+        "trigger": "new_row"
+      },
+      "metadata": {
+        "designer": {"x": 0, "y": 200}
+      }
+    },
+    {
+      "id": 2,
+      "module": "openai-gpt-4:CreateCompletion",
+      "parameters": {
+        "connection": "YOUR_OPENAI_CONNECTION"
+      },
+      "mapper": {
+        "model": "gpt-4",
+        "temperature": "0.8",
+        "max_tokens": "1000",
+        "messages": [
+          {"role": "system", "content": "You are a professional blog writer who produces clear, SEO-friendly articles."},
+          {"role": "user", "content": "Write a full blog draft based on this topic: {{1.topic}}"}
+        ]
+      },
+      "metadata": {
+        "designer": {"x": 300, "y": 200}
+      }
+    },
+    {
+      "id": 3,
+      "module": "google-docs:CreateDocument",
+      "parameters": {
+        "connection": "YOUR_GOOGLE_CONNECTION",
+        "folderId": "YOUR_DOCS_FOLDER"
+      },
+      "mapper": {
+        "title": "Blog Draft - {{1.topic}}",
+        "content": "{{2.choices[].message.content}}"
+      },
+      "metadata": {
+        "designer": {"x": 600, "y": 200}
+      }
+    }
+  ],
+  "metadata": {
+    "tool": "Make.com",
+    "owner": "areeshausmani93@gmail.com"
+  }
+}
